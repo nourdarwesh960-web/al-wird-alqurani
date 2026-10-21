@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064E3B" />
+      <stop offset="100%" stop-color="#022C22" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+  </defs>
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGrad)" stroke="url(#goldGrad)" stroke-width="12" />
+  <circle cx="256" cy="256" r="224" fill="none" stroke="rgba(245, 158, 11, 0.3)" stroke-width="2" stroke-dasharray="6,6" />
+
+  <!-- Open Quran Book Icon -->
+  <path d="M256 160 C210 130 140 140 90 160 L90 350 C140 330 210 320 256 350 C302 320 372 330 422 350 L422 160 C372 140 302 130 256 160 Z" fill="none" stroke="url(#goldGrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 160 L256 350" stroke="url(#goldGrad)" stroke-width="14" stroke-linecap="round"/>
+  
+  <!-- Quran Spine Ribbon -->
+  <path d="M256 350 C256 390 230 410 256 425 C282 410 256 390 256 350" fill="url(#goldGrad)" opacity="0.9" />
+
+  <!-- Decorative Rays / Star -->
+  <circle cx="256" cy="115" r="8" fill="url(#goldGrad)" />
+  <path d="M256 95 L256 103 M256 127 L256 135 M236 115 L244 115 M268 115 L276 115" stroke="url(#goldGrad)" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Text "وردك" in calligraphy style -->
+  <text x="256" y="270" font-family="'Cairo', 'Amiri', sans-serif" font-weight="900" font-size="44" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">وِرْدُك</text>
+</svg>

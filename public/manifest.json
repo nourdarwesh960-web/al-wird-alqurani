@@ -1,0 +1,18 @@
+{
+  "short_name": "الورد القرآني",
+  "name": "الورد القرآني — رفيقك اليومي لقراءة وحفظ القرآن الكريم",
+  "icons": [
+    {
+      "src": "/app-icon.jpg",
+      "type": "image/jpeg",
+      "sizes": "192x192 512x512 1024x1024"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#064E3B",
+  "theme_color": "#064E3B",
+  "display": "standalone",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar"
+}

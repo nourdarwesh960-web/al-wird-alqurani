@@ -1,0 +1,12 @@
+{
+  "appId": "com.alwird.alqurani",
+  "appName": "الورد القرآني",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#064E3B",
+    "allowMixedContent": true
+  }
+}
