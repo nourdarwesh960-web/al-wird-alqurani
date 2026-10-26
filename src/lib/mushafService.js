@@ -1,3 +1,5 @@
+import { OFFLINE_SURAHS_MAP } from "../data/juzAmmaSurahs";
+
 // Mushaf Service: Fetches, caches, and prepares Medina Mushaf pages
 // Uses Amiri Quran and Aref Ruqaa typography with natural Arabic text flow
 const API_BASE = "https://api.alquran.cloud/v1";
@@ -164,21 +166,29 @@ export const BUILTIN_KIDS_SURAHS = {
 };
 
 /**
- * Fetch full Surah ayahs with cache
+ * Fetch full Surah ayahs with verified offline database and online fallback
  */
 export async function getSurahAyahs(surahNumber) {
   const num = Number(surahNumber) || 1;
-  const storageKey = `wirdak_surah_cache_v2_${num}`;
 
+  // 1. Instant verified offline map (Covers Surah 1 + all Juz Amma 78-114)
+  if (OFFLINE_SURAHS_MAP[num]) {
+    return OFFLINE_SURAHS_MAP[num];
+  }
+
+  // 2. Builtin legacy fallback
   if (BUILTIN_KIDS_SURAHS[num]) {
     return BUILTIN_KIDS_SURAHS[num];
   }
 
+  // 3. LocalStorage persistent cache
+  const storageKey = `wirdak_surah_cache_v3_${num}`;
   try {
     const local = localStorage.getItem(storageKey);
     if (local) return JSON.parse(local);
   } catch {}
 
+  // 4. Online API fetch
   try {
     const res = await fetch(`https://api.alquran.cloud/v1/surah/${num}/quran-uthmani`);
     const json = await res.json();
@@ -186,11 +196,19 @@ export async function getSurahAyahs(surahNumber) {
       const data = {
         number: json.data.number,
         name: json.data.name?.replace("سُورَةُ ", "") || `سورة ${num}`,
-        ayahs: json.data.ayahs.map((a) => ({
-          numberInSurah: a.numberInSurah,
-          text: a.text,
-          verseKey: `${num}:${a.numberInSurah}`,
-        })),
+        numberOfAyahs: json.data.ayahs.length,
+        ayahs: json.data.ayahs.map((a) => {
+          let text = a.text;
+          // Strip prepended Basmalah from Ayah 1 (except Al-Fatiha and At-Tawbah)
+          if (num !== 1 && a.numberInSurah === 1) {
+            text = text.replace(/^بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ\s*/, "").trim();
+          }
+          return {
+            numberInSurah: a.numberInSurah,
+            text,
+            verseKey: `${num}:${a.numberInSurah}`,
+          };
+        }),
       };
       try {
         localStorage.setItem(storageKey, JSON.stringify(data));
@@ -201,5 +219,35 @@ export async function getSurahAyahs(surahNumber) {
     console.warn(`Surah ${num} fetch failed:`, err);
   }
 
-  return BUILTIN_KIDS_SURAHS[1];
+  return OFFLINE_SURAHS_MAP[1] || BUILTIN_KIDS_SURAHS[1];
+}
+
+/**
+ * Fetch Ayah Tafsir (التفسير الميسر) with persistent caching
+ */
+export async function getAyahTafsir(verseKey) {
+  if (!verseKey) return "";
+  const key = String(verseKey).trim();
+  const storageKey = `wirdak_tafsir_muyassar_${key}`;
+
+  try {
+    const local = localStorage.getItem(storageKey);
+    if (local) return local;
+  } catch {}
+
+  try {
+    const res = await fetch(`https://api.alquran.cloud/v1/ayah/${key}/ar.muyassar`);
+    const json = await res.json();
+    if (json?.data?.text) {
+      const tafsirText = json.data.text;
+      try {
+        localStorage.setItem(storageKey, tafsirText);
+      } catch {}
+      return tafsirText;
+    }
+  } catch (err) {
+    console.warn(`Tafsir fetch failed for ${key}:`, err);
+  }
+
+  return "تعذر تحميل التفسير حالياً، يرجى التأكد من الاتصال بالإنترنت.";
 }

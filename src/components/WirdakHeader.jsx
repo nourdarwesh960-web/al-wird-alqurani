@@ -49,14 +49,16 @@ export default function WirdakHeader({
     <header
       style={{
         width: "100%",
-        backgroundColor: isDark ? "#081B15" : "#064E3B",
+        background: isDark
+          ? "linear-gradient(135deg, #1C150A 0%, #0F0B05 100%)"
+          : "linear-gradient(135deg, #8C6708 0%, #5E4303 100%)",
         color: "#FFFFFF",
         padding: "8px 10px max(6px, env(safe-area-inset-top, 0px)) 10px",
-        boxShadow: "0 4px 18px rgba(0, 0, 0, 0.25)",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.35)",
         flexShrink: 0,
         direction: "rtl",
-        borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "transparent"}`,
-        transition: "background-color 0.25s ease",
+        borderBottom: `2px solid var(--accent-gold)`,
+        transition: "background 0.25s ease",
         boxSizing: "border-box",
       }}
     >
@@ -77,29 +79,29 @@ export default function WirdakHeader({
             src="/app-icon.jpg"
             alt="الورد القرآني"
             style={{
-              width: "30px",
-              height: "30px",
+              width: "32px",
+              height: "32px",
               borderRadius: "8px",
               objectFit: "cover",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-              border: "1px solid rgba(245, 158, 11, 0.4)",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.4)",
+              border: "1.5px solid var(--accent-gold)",
             }}
           />
           <div>
             <h1
               style={{
                 margin: 0,
-                fontSize: "17px",
+                fontSize: "17.5px",
                 fontWeight: 900,
-                color: "#FCD34D",
+                color: "#FDE68A",
                 fontFamily: "'Aref Ruqaa', serif",
                 lineHeight: 1.1,
               }}
             >
               الورد القرآني
             </h1>
-            <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.75)" }}>
-              رفيقك اليومي للقراءة والحفظ
+            <span style={{ fontSize: "10px", color: isDark ? "#FCD34D" : "#FFF7ED" }}>
+              المصحف الذهبي — رفيقك اليومي
             </span>
           </div>
         </div>
@@ -343,7 +345,7 @@ export default function WirdakHeader({
               padding: "7px 6px",
               borderRadius: "7px",
               border: "none",
-              backgroundColor: mode === "reading" ? "#059669" : "transparent",
+              backgroundColor: mode === "reading" ? "#B8860B" : "transparent",
               color: mode === "reading" ? "#FFFFFF" : "rgba(255, 255, 255, 0.75)",
               fontWeight: 800,
               fontSize: "12px",
@@ -398,7 +400,7 @@ export default function WirdakHeader({
               padding: "7px 6px",
               borderRadius: "7px",
               border: "none",
-              backgroundColor: mode === "listening" ? "#1E3A8A" : "transparent",
+              backgroundColor: mode === "listening" ? "#785306" : "transparent",
               color: mode === "listening" ? "#FFFFFF" : "rgba(255, 255, 255, 0.75)",
               fontWeight: 800,
               fontSize: "12px",

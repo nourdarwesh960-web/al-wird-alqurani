@@ -86,10 +86,18 @@ export default function WirdakKidsView({ onExitKidsMode, isDark = false }) {
     return list;
   }, [activeCategory, surahSearch]);
 
+  // Auto-select first surah when category or search changes
+  useEffect(() => {
+    if (visibleSurahs.length > 0 && !visibleSurahs.some((s) => s.number === selectedSurahNum)) {
+      setSelectedSurahNum(visibleSurahs[0].number);
+    }
+  }, [visibleSurahs, selectedSurahNum]);
+
   // 1. Load Surah Ayahs & Reset Revealed State
   useEffect(() => {
     let active = true;
     setLoading(true);
+    setSurahData(null); // Clear previous surah immediately to prevent any text mismatch
     setSpokenText("");
     spokenTextRef.current = "";
     setFeedback(null);
@@ -720,6 +728,25 @@ export default function WirdakKidsView({ onExitKidsMode, isDark = false }) {
                 الآية التي عليها الدور: {toArabicNumerals(currentAyahIndex + 1)} من {toArabicNumerals(totalAyahsCount)}
               </div>
             </div>
+
+            {/* Basmalah Banner for Ayah 1 */}
+            {currentAyahIndex === 0 && selectedSurahNum !== 1 && selectedSurahNum !== 9 && (
+              <div
+                style={{
+                  fontFamily: "'Amiri Quran', serif",
+                  fontSize: "20px",
+                  color: isDark ? "#FDE68A" : "#854D0E",
+                  margin: "4px auto 14px",
+                  padding: "4px 16px",
+                  borderBottom: isDark
+                    ? "1px dashed rgba(245, 158, 11, 0.3)"
+                    : "1px dashed rgba(194, 155, 56, 0.4)",
+                  display: "inline-block",
+                }}
+              >
+                بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+              </div>
+            )}
 
             {/* Ayah Text Display: Shown if Revealed OR HideMode is Off */}
             {isCurrentAyahRevealed ? (

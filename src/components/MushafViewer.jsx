@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   AlertCircle,
   Bookmark,
+  BookOpen,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -20,8 +21,32 @@ import {
   RotateCcw,
   Square,
   Volume2,
+  X,
 } from "lucide-react";
-import { getMushafPage, toArabicNumerals } from "../lib/mushafService";
+import { getMushafPage, toArabicNumerals, getAyahTafsir } from "../lib/mushafService";
+
+function GoldenCornerSVG({ className }) {
+  return (
+    <svg
+      className={`golden-corner ${className}`}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M2 2H12C12 7.52 7.52 12 2 12V2Z"
+        fill="currentColor"
+        fillOpacity="0.32"
+      />
+      <path
+        d="M2 2H19C19 11.39 11.39 19 2 19V2Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
+      <circle cx="5" cy="5" r="2" fill="currentColor" />
+    </svg>
+  );
+}
 import { SURAHS_LIST } from "../data/surahs";
 import {
   playPageFlipSound,
@@ -52,6 +77,21 @@ export default function MushafViewer({
   const [error, setError] = useState("");
   const [hideTextForRecall, setHideTextForRecall] = useState(false);
   const [copiedKey, setCopiedKey] = useState(null);
+
+  // Tafsir Modal State
+  const [isTafsirOpen, setIsTafsirOpen] = useState(false);
+  const [tafsirData, setTafsirData] = useState(null); // { verseKey, ayahText, text, loading }
+
+  const handleOpenTafsir = async (verseKey, ayahText) => {
+    setIsTafsirOpen(true);
+    setTafsirData({ verseKey, ayahText, text: "", loading: true });
+    try {
+      const text = await getAyahTafsir(verseKey);
+      setTafsirData({ verseKey, ayahText, text, loading: false });
+    } catch {
+      setTafsirData({ verseKey, ayahText, text: "تعذر جلب التفسير حالياً، يرجى المحاولة لاحقاً.", loading: false });
+    }
+  };
 
   // Dynamic Quran Font Size Control (Zoom in/out for mobile readability)
   const [quranFontSize, setQuranFontSize] = useState(() => {
@@ -522,30 +562,42 @@ export default function MushafViewer({
         </div>
       </div>
 
-      {/* Main Mushaf Page Frame — True Pure Black Background in Dark Mode with Swipe Handlers */}
+      {/* Main Mushaf Page Frame — Authentic Golden Quran Frame with Double Gilded Border & Ornaments */}
       <div
-        className="wird-mushaf-card"
+        className="golden-mushaf-frame"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        style={{
-          position: "relative",
-          width: "100%",
-          minHeight: "520px",
-          backgroundColor: isDark ? "#000000" : "#FFFEF9",
-          border: isDark ? "3px double #B45309" : "3px double #C29B38",
-          borderRadius: "14px",
-          boxShadow: isDark
-            ? "0 8px 30px rgba(0,0,0,0.85), inset 0 0 50px rgba(217, 119, 6, 0.08)"
-            : "0 8px 30px rgba(0,0,0,0.06), inset 0 0 45px rgba(194, 155, 56, 0.04)",
-          padding: "16px 10px",
-          boxSizing: "border-box",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          transition: "background-color 0.2s ease, border-color 0.2s ease",
-        }}
       >
+        {/* Four Islamic Golden Corner Motifs */}
+        <GoldenCornerSVG className="golden-corner-tl" />
+        <GoldenCornerSVG className="golden-corner-tr" />
+        <GoldenCornerSVG className="golden-corner-bl" />
+        <GoldenCornerSVG className="golden-corner-br" />
+
+        {/* Inner Gilded Frame */}
+        <div className="golden-mushaf-inner-frame">
+          {/* Top Medina Header inside Gilded Frame */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingBottom: "8px",
+              borderBottom: "1px solid var(--border)",
+              marginBottom: "14px",
+              fontSize: "12.5px",
+              fontWeight: 800,
+              fontFamily: "'Aref Ruqaa', serif",
+              color: isDark ? "#FCD34D" : "#785306",
+            }}
+          >
+            <span>سُورَةُ {pageData?.surah?.name?.replace("سُورَةُ ", "") || surahMeta.name}</span>
+            <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "'IBM Plex Sans Arabic', sans-serif" }}>
+              الجُزْءُ {toArabicNumerals(pageData?.juz || surahMeta.juz || 1)}
+            </span>
+            <span>الحِزْبُ {toArabicNumerals(Math.ceil(((pageData?.juz || 1) - 1) * 2 + 1))}</span>
+          </div>
         {/* Loading Spinner */}
         {loading && (
           <div
@@ -603,68 +655,26 @@ export default function MushafViewer({
 
               return (
                 <div key={ayah.number} style={{ display: "inline" }}>
-                  {/* Surah Header Banner if first ayah in Surah */}
+                  {/* Surah Header Cartouche in Golden Quran Style */}
                   {ayah.isFirstAyahInSurah && (
-                    <div
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        margin: idx === 0 ? "0 0 16px" : "24px 0 16px",
-                        textAlign: "center",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "inline-block",
-                          width: "94%",
-                          maxWidth: "460px",
-                          padding: "6px 14px",
-                          border: isDark ? "2px solid #D97706" : "2px solid #C29B38",
-                          borderRadius: "14px",
-                          backgroundColor: isDark
-                            ? "rgba(217, 119, 6, 0.16)"
-                            : "rgba(194, 155, 56, 0.08)",
-                          color: isDark ? "#FDE68A" : "#78350F",
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontFamily: "'Aref Ruqaa', serif",
-                            fontSize: "21px",
-                            fontWeight: 900,
-                          }}
-                        >
-                          سُورَةُ {ayah.surah?.name?.replace("سُورَةُ ", "")}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "11px",
-                            color: isDark ? "#FCD34D" : "#92400E",
-                            marginTop: "2px",
-                          }}
-                        >
-                          {ayah.surah?.revelationType === "Meccan" ? "مكية" : "مدنية"} • آياتها {toArabicNumerals(ayah.surah?.numberOfAyahs || 0)}
-                        </div>
+                    <div className="golden-surah-cartouche">
+                      <div className="golden-surah-title">
+                        سُورَةُ {ayah.surah?.name?.replace("سُورَةُ ", "")}
                       </div>
-
-                      {/* Basmala Display */}
-                      {ayah.hasBasmalaHeader && (
-                        <div
-                          style={{
-                            fontFamily: "'Amiri Quran', serif",
-                            fontSize: "22px",
-                            color: isDark ? "#FDE68A" : "#064E3B",
-                            margin: "12px 0 8px",
-                            textAlign: "center",
-                          }}
-                        >
-                          بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
-                        </div>
-                      )}
+                      <div className="golden-surah-meta">
+                        {ayah.surah?.revelationType === "Meccan" ? "مَكِّيَّةٌ" : "مَدَنِيَّةٌ"} • آيَاتُهَا {toArabicNumerals(ayah.surah?.numberOfAyahs || 0)}
+                      </div>
                     </div>
                   )}
 
-                  {/* Ayah Text and Circular Badge — Reveals IF Correct, Stays Hidden IF Wrong */}
+                  {/* Basmalah Calligraphy Header */}
+                  {ayah.hasBasmalaHeader && (
+                    <div className="golden-basmalah-header">
+                      بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+                    </div>
+                  )}
+
+                  {/* Ayah Text and Circular Golden Medallion */}
                   <span
                     onClick={() => {
                       onSelectVerse(ayah.verseKey);
@@ -674,23 +684,14 @@ export default function MushafViewer({
                         onPlayAyah(ayah.verseKey);
                       }
                     }}
+                    className={`golden-ayah-span ${isSelected ? "is-selected" : ""}`}
                     style={{
-                      fontFamily: "'Amiri Quran', 'Aref Ruqaa', serif",
+                      fontFamily: "'Amiri Quran', 'Scheherazade New', serif",
                       fontSize: `${quranFontSize}px`,
                       lineHeight: `${Math.max(2.35, quranFontSize * 0.09)}`,
                       color: isDark
                         ? (isSelected ? "#FDE68A" : "#FFFFFF")
-                        : (isSelected ? "#92400E" : "#0F172A"),
-                      backgroundColor: isSelected
-                        ? (isDark ? "rgba(217, 119, 6, 0.3)" : "rgba(245, 158, 11, 0.16)")
-                        : isTargetTurn
-                        ? (isDark ? "rgba(217, 119, 6, 0.25)" : "rgba(245, 158, 11, 0.12)")
-                        : "transparent",
-                      borderRadius: "6px",
-                      padding: "2px 4px",
-                      cursor: "pointer",
-                      transition: "background 0.15s ease",
-                      display: "inline",
+                        : (isSelected ? "#78350F" : "var(--mushaf-text)"),
                       border: isTargetTurn ? `1px dashed ${isDark ? "#D97706" : "#F59E0B"}` : "none",
                     }}
                   >
@@ -702,39 +703,19 @@ export default function MushafViewer({
                         style={{
                           letterSpacing: "3px",
                           opacity: 0.45,
-                          color: isDark ? "#94A3B8" : "#64748B",
+                          color: "var(--text-muted)",
                           fontFamily: "monospace",
                         }}
                       >
                         ••••••••••••
                       </span>
                     )}{" "}
-                    {/* Ayah Badge Number — Warm Gold in Dark Mode */}
+                    {/* Authentic Golden Ayah Medallion */}
                     <span
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "24px",
-                        height: "24px",
-                        borderRadius: "50%",
-                        border: isRevealed
-                          ? (isDark ? "1px solid #10B981" : "1px solid #059669")
-                          : (isDark ? "1px solid #D97706" : "1px solid #C29B38"),
-                        color: isRevealed
-                          ? (isDark ? "#34D399" : "#059669")
-                          : (isDark ? "#FDE68A" : "#92400E"),
-                        fontSize: "12px",
-                        fontWeight: 700,
-                        margin: "0 4px",
-                        verticalAlign: "middle",
-                        fontFamily: "'IBM Plex Sans Arabic', sans-serif",
-                        backgroundColor: isSelected
-                          ? (isDark ? "rgba(217, 119, 6, 0.45)" : "rgba(245, 158, 11, 0.25)")
-                          : (isDark ? "rgba(217, 119, 6, 0.18)" : "rgba(194, 155, 56, 0.08)"),
-                      }}
+                      className="golden-ayah-mark"
+                      title={`الآية ${toArabicNumerals(ayah.numberInSurah)}`}
                     >
-                      {toArabicNumerals(ayah.numberInSurah)}
+                      <span>{toArabicNumerals(ayah.numberInSurah)}</span>
                     </span>
                   </span>
                 </div>
@@ -743,19 +724,23 @@ export default function MushafViewer({
           </div>
         )}
 
-        {/* Selected Ayah Quick Control Bar (in standard reading mode) */}
+        {/* Selected Ayah Golden Quick Action Ribbon */}
         {!hideTextForRecall && activeVerseKey && (
           <div
             style={{
+              width: "100%",
               marginTop: "16px",
-              padding: "8px 12px",
-              backgroundColor: isDark ? "#0F172A" : "#FFFFFF",
-              border: isDark ? "1px solid #D97706" : "1px solid #C29B38",
-              borderRadius: "12px",
+              padding: "10px 14px",
+              backgroundColor: "var(--bg-card)",
+              border: "1.5px solid var(--accent-gold)",
+              borderRadius: "14px",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+              boxShadow: "0 4px 18px var(--mushaf-gold-glow)",
+              boxSizing: "border-box",
+              flexWrap: "wrap",
+              gap: "8px",
             }}
           >
             <div
@@ -763,25 +748,93 @@ export default function MushafViewer({
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
-                fontSize: "12px",
+                fontSize: "13px",
                 fontWeight: 800,
-                color: isDark ? "#FCD34D" : "#064E3B",
+                color: "var(--accent-gold)",
+                fontFamily: "'Aref Ruqaa', serif",
               }}
             >
-              <Headphones size={13} />
+              <Headphones size={15} />
               <span>الآية {activeVerseKey}</span>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+              {/* Listen button */}
               <button
                 onClick={() => onPlayAyah(activeVerseKey)}
                 style={{
-                  background: "#059669",
+                  background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
                   color: "#FFFFFF",
                   border: "none",
                   borderRadius: "8px",
-                  padding: "5px 10px",
-                  fontSize: "11px",
+                  padding: "6px 11px",
+                  fontSize: "11.5px",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                <Play size={12} fill="#FFFFFF" />
+                <span>استماع</span>
+              </button>
+
+              {/* Repetition for memorization */}
+              <button
+                onClick={onIncrementRepetition}
+                style={{
+                  background: "linear-gradient(135deg, #D97706 0%, #B45309 100%)",
+                  color: "#FFFFFF",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "6px 11px",
+                  fontSize: "11.5px",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                <RotateCcw size={12} />
+                <span>تكرار ({toArabicNumerals(repetitionCount)})</span>
+              </button>
+
+              {/* Tafsir button */}
+              <button
+                onClick={() => {
+                  const match = pageData?.ayahs?.find((a) => a.verseKey === activeVerseKey);
+                  handleOpenTafsir(activeVerseKey, match?.text || "");
+                }}
+                style={{
+                  background: "linear-gradient(135deg, #B8860B 0%, #8C6708 100%)",
+                  color: "#FFFFFF",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "6px 11px",
+                  fontSize: "11.5px",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                <BookOpen size={12} />
+                <span>تفسير</span>
+              </button>
+
+              {/* Bookmark button */}
+              <button
+                onClick={onToggleBookmark}
+                style={{
+                  background: isBookmarked ? "var(--primary)" : "var(--bg-card-subtle)",
+                  color: isBookmarked ? "#FFFFFF" : "var(--text)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "8px",
+                  padding: "6px 9px",
+                  fontSize: "11.5px",
                   fontWeight: 700,
                   cursor: "pointer",
                   display: "flex",
@@ -789,22 +842,23 @@ export default function MushafViewer({
                   gap: "3px",
                 }}
               >
-                <Play size={11} />
-                <span>استماع</span>
+                <Bookmark size={12} />
+                <span>فاصل</span>
               </button>
 
+              {/* Copy button */}
               <button
                 onClick={(e) => {
                   const match = pageData?.ayahs?.find((a) => a.verseKey === activeVerseKey);
                   if (match) handleCopyAyah(e, match.text, activeVerseKey);
                 }}
                 style={{
-                  background: isDark ? "#1E293B" : "#F8FAFC",
-                  color: isDark ? "#E2E8F0" : "#475569",
-                  border: isDark ? "1px solid #334155" : "1px solid #CBD5E1",
+                  background: "var(--bg-card-subtle)",
+                  color: "var(--text)",
+                  border: "1px solid var(--border)",
                   borderRadius: "8px",
-                  padding: "5px 8px",
-                  fontSize: "11px",
+                  padding: "6px 9px",
+                  fontSize: "11.5px",
                   fontWeight: 700,
                   cursor: "pointer",
                   display: "flex",
@@ -812,7 +866,7 @@ export default function MushafViewer({
                   gap: "3px",
                 }}
               >
-                <Copy size={11} />
+                <Copy size={12} />
                 <span>{copiedKey === activeVerseKey ? "تم النسخ" : "نسخ"}</span>
               </button>
             </div>
@@ -988,6 +1042,7 @@ export default function MushafViewer({
           <span>الحزب {toArabicNumerals(Math.ceil(((pageData?.juz || 1) - 1) * 2 + 1))}</span>
         </div>
       </div>
+    </div>
 
       {/* Memorization Repetition Counter Dock */}
       {mode === "memorization" && !hideTextForRecall && (
@@ -1115,6 +1170,134 @@ export default function MushafViewer({
           <ChevronLeft size={15} />
         </button>
       </div>
+
+      {/* Tafsir Al-Muyassar Modal */}
+      {isTafsirOpen && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
+            zIndex: 2500,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "16px",
+            direction: "rtl",
+          }}
+          onClick={() => setIsTafsirOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: isDark ? "#141009" : "#FDFBF7",
+              border: "2px solid var(--accent-gold)",
+              borderRadius: "18px",
+              maxWidth: "520px",
+              width: "100%",
+              padding: "20px",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
+              boxSizing: "border-box",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                borderBottom: "1px solid var(--border)",
+                paddingBottom: "10px",
+                marginBottom: "14px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <BookOpen size={18} color="var(--accent-gold)" />
+                <h3
+                  style={{
+                    margin: 0,
+                    fontFamily: "'Aref Ruqaa', serif",
+                    fontSize: "17px",
+                    fontWeight: 900,
+                    color: isDark ? "#FDE68A" : "#664903",
+                  }}
+                >
+                  التفسير الميسر — الآية {tafsirData?.verseKey}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsTafsirOpen(false)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "var(--text-muted)",
+                  cursor: "pointer",
+                  padding: "4px",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div
+              style={{
+                fontFamily: "'Amiri Quran', serif",
+                fontSize: "19px",
+                lineHeight: 2.1,
+                color: isDark ? "#FCD34D" : "#78350F",
+                marginBottom: "14px",
+                padding: "10px 14px",
+                backgroundColor: isDark ? "rgba(212, 175, 55, 0.08)" : "rgba(198, 146, 20, 0.06)",
+                borderRadius: "10px",
+                border: "1px dashed var(--border)",
+              }}
+            >
+              {tafsirData?.ayahText}
+            </div>
+
+            <div
+              style={{
+                fontSize: "14px",
+                lineHeight: 1.85,
+                color: "var(--text)",
+                maxHeight: "260px",
+                overflowY: "auto",
+                padding: "0 4px",
+              }}
+            >
+              {tafsirData?.loading ? (
+                <div style={{ textAlign: "center", padding: "26px", color: "var(--accent-gold)" }}>
+                  <Loader2 size={24} className="wird-spin" style={{ margin: "0 auto 8px" }} />
+                  <div>جاري جلب التفسير الميسر...</div>
+                </div>
+              ) : (
+                tafsirData?.text
+              )}
+            </div>
+
+            <button
+              onClick={() => setIsTafsirOpen(false)}
+              style={{
+                marginTop: "18px",
+                width: "100%",
+                padding: "10px",
+                backgroundColor: "var(--primary)",
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: "10px",
+                fontWeight: 800,
+                fontSize: "13px",
+                cursor: "pointer",
+              }}
+            >
+              إغلاق النافذة
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

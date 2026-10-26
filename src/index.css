@@ -1,34 +1,97 @@
+/* =========================================================================
+   المصحف الذهبي الأصيل — The Golden Quran Design System
+   Royal Islamic Gilded Aesthetics, Medina Mushaf Flow & True Mobile Ergonomics
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Aref+Ruqaa:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Scheherazade+New:wght@400;700&display=swap');
+
 :root,
 [data-theme="light"] {
-  --primary: #064E3B;
-  --primary-light: #059669;
-  --accent: #F59E0B;
+  /* الوضع الذهبي الورقي الملكي (Classic Golden Parchment) */
+  --primary: #8C6708;
+  --primary-gradient: linear-gradient(135deg, #A87D0E 0%, #6E4F04 100%);
+  --primary-light: #B8860B;
+  --accent: #C69214;
   --accent-gold: #D4AF37;
-  --bg-page: #F8FAFC;
-  --bg-card: #FFFFFF;
-  --bg-card-subtle: #F1F5F9;
-  --text: #0F172A;
-  --text-muted: #64748B;
-  --border: #E2E8F0;
-  --mushaf-bg: #FFFEF9;
-  --mushaf-text: #0F172A;
-  --mushaf-border: #C29B38;
+  --accent-gold-light: #FBF0CD;
+  --accent-gold-border: #C69214;
+  --bg-page: #F4ECE0;
+  --bg-card: #FDFBF7;
+  --bg-card-subtle: #EDE4D0;
+  --text: #1C160C;
+  --text-muted: #766346;
+  --border: #D8C39B;
+  
+  /* صفحة المصحف الذهبي */
+  --mushaf-bg: #FAF5E8;
+  --mushaf-bg-gradient: radial-gradient(ellipse at center, #FFFDF8 0%, #F5ECDA 100%);
+  --mushaf-text: #140F08;
+  --mushaf-border: #C69214;
+  --mushaf-border-outer: #855F0D;
+  --mushaf-gold-glow: rgba(198, 146, 20, 0.18);
+  --mushaf-shadow: 0 10px 35px rgba(110, 79, 4, 0.12), inset 0 0 70px rgba(198, 146, 20, 0.08);
+
+  /* علامة الآية المذهبة */
+  --ayah-mark-bg: #F7EBC9;
+  --ayah-mark-border: #B8860B;
+  --ayah-mark-text: #6B4C02;
+  --ayah-highlight-bg: rgba(212, 175, 55, 0.18);
+  --ayah-highlight-glow: 0 0 14px rgba(212, 175, 55, 0.35);
+
+  /* ترويسة السورة */
+  --surah-cartouche-bg: linear-gradient(135deg, #FDF7E7 0%, #F5E5BE 50%, #E8D097 100%);
+  --surah-cartouche-border: #B8860B;
+  --surah-cartouche-title: #5E4303;
+  --surah-cartouche-sub: #7D5B06;
+
+  /* شريط الأدوات الذهبي */
+  --toolbar-bg: rgba(253, 251, 247, 0.92);
+  --toolbar-border: #D4AF37;
+  --toolbar-shadow: 0 -4px 20px rgba(110, 79, 4, 0.14);
 }
 
 [data-theme="dark"] {
-  --primary: #052219;
-  --primary-light: #10B981;
+  /* الوضع الذهبي الليلي الملكي (Dark Imperial Gold) */
+  --primary: #1C150A;
+  --primary-gradient: linear-gradient(135deg, #2A1F0D 0%, #120D04 100%);
+  --primary-light: #D4AF37;
   --accent: #F59E0B;
-  --accent-gold: #EAB308;
-  --bg-page: #05080E;
-  --bg-card: #090D16;
-  --bg-card-subtle: #0F172A;
-  --text: #FFFFFF;
-  --text-muted: #94A3B8;
-  --border: rgba(255, 255, 255, 0.1);
-  --mushaf-bg: #000000;
-  --mushaf-text: #FFFFFF;
-  --mushaf-border: #B45309;
+  --accent-gold: #E5C158;
+  --accent-gold-light: #FDE68A;
+  --accent-gold-border: #D4AF37;
+  --bg-page: #0A0806;
+  --bg-card: #141009;
+  --bg-card-subtle: #1D180F;
+  --text: #FAF5E8;
+  --text-muted: #BDB096;
+  --border: rgba(212, 175, 55, 0.22);
+
+  /* صفحة المصحف الذهبي */
+  --mushaf-bg: #0C0A07;
+  --mushaf-bg-gradient: radial-gradient(ellipse at center, #15110B 0%, #080604 100%);
+  --mushaf-text: #FFFDF8;
+  --mushaf-border: #D4AF37;
+  --mushaf-border-outer: #7A560A;
+  --mushaf-gold-glow: rgba(229, 193, 88, 0.25);
+  --mushaf-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), inset 0 0 80px rgba(212, 175, 55, 0.08);
+
+  /* علامة الآية المذهبة */
+  --ayah-mark-bg: rgba(212, 175, 55, 0.16);
+  --ayah-mark-border: #E5C158;
+  --ayah-mark-text: #FDE68A;
+  --ayah-highlight-bg: rgba(212, 175, 55, 0.24);
+  --ayah-highlight-glow: 0 0 18px rgba(229, 193, 88, 0.5);
+
+  /* ترويسة السورة */
+  --surah-cartouche-bg: linear-gradient(135deg, rgba(212, 175, 55, 0.22) 0%, rgba(133, 95, 13, 0.32) 100%);
+  --surah-cartouche-border: #E5C158;
+  --surah-cartouche-title: #FDE68A;
+  --surah-cartouche-sub: #FCD34D;
+
+  /* شريط الأدوات الذهبي */
+  --toolbar-bg: rgba(18, 14, 8, 0.94);
+  --toolbar-border: #B8860B;
+  --toolbar-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7);
 }
 
 * {
@@ -43,11 +106,229 @@ body {
   padding: 0;
   background-color: var(--bg-page);
   color: var(--text);
-  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   direction: rtl;
   text-align: right;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+}
+
+/* =========================================================================
+   علامة فاصل الآية المذهبة (Golden Quran Ayah Medallion)
+   ========================================================================= */
+.golden-ayah-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 28px;
+  height: 28px;
+  margin: 0 4px;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+}
+
+.golden-ayah-mark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--ayah-mark-border);
+  background-color: var(--ayah-mark-bg);
+  box-shadow: 0 0 6px var(--mushaf-gold-glow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.golden-ayah-mark::after {
+  content: "";
+  position: absolute;
+  inset: 2.5px;
+  border-radius: 50%;
+  border: 1px dashed var(--ayah-mark-border);
+  opacity: 0.7;
+}
+
+.golden-ayah-mark span {
+  position: relative;
+  z-index: 1;
+  font-family: 'Aref Ruqaa', 'Amiri Quran', serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ayah-mark-text);
+  line-height: 1;
+  transform: translateY(-0.5px);
+}
+
+.golden-ayah-mark:hover::before {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px var(--accent-gold);
+}
+
+/* =========================================================================
+   إطار صفحة المصحف الذهبي المزدوج المحفور (Golden Mushaf Double Border)
+   ========================================================================= */
+.golden-mushaf-frame {
+  position: relative;
+  width: 100%;
+  background: var(--mushaf-bg-gradient);
+  border: 2px solid var(--mushaf-border);
+  border-radius: 14px;
+  box-shadow: var(--mushaf-shadow);
+  padding: 18px 14px;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+
+/* الإطار الداخلي الرقيق مع الزوايا الإسلامية */
+.golden-mushaf-inner-frame {
+  position: relative;
+  width: 100%;
+  border: 1px solid var(--mushaf-border);
+  border-radius: 10px;
+  padding: 16px 12px;
+  box-sizing: border-box;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* الزوايا الإسلامية المذهبة (Islamic Arabesque Corner Motifs) */
+.golden-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  color: var(--accent-gold);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.9;
+}
+.golden-corner-tl { top: 4px; right: 4px; }
+.golden-corner-tr { top: 4px; left: 4px; transform: scaleX(-1); }
+.golden-corner-bl { bottom: 4px; right: 4px; transform: scaleY(-1); }
+.golden-corner-br { bottom: 4px; left: 4px; transform: scale(-1); }
+
+/* =========================================================================
+   ترويسة السورة المذهبة (Golden Surah Header Cartouche)
+   ========================================================================= */
+.golden-surah-cartouche {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 18px auto 16px;
+  padding: 8px 18px;
+  border-radius: 14px;
+  background: var(--surah-cartouche-bg);
+  border: 2px solid var(--surah-cartouche-border);
+  box-shadow: 0 4px 15px var(--mushaf-gold-glow);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.golden-surah-title {
+  font-family: 'Aref Ruqaa', 'Amiri Quran', serif;
+  font-size: 23px;
+  font-weight: 900;
+  color: var(--surah-cartouche-title);
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.golden-surah-meta {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--surah-cartouche-sub);
+  margin-top: 3px;
+}
+
+/* =========================================================================
+   ترويسة البسملة الشريفة (Golden Basmalah Header)
+   ========================================================================= */
+.golden-basmalah-header {
+  font-family: 'Amiri Quran', serif;
+  font-size: 24px;
+  color: var(--surah-cartouche-title);
+  margin: 14px 0 12px;
+  text-align: center;
+  line-height: 1.5;
+  user-select: none;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================================================
+   تظليل الآية المحددة بالنور الذهبي (Golden Ayah Highlight)
+   ========================================================================= */
+.golden-ayah-span {
+  font-family: 'Amiri Quran', 'Scheherazade New', serif;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  display: inline;
+}
+
+.golden-ayah-span.is-selected {
+  background-color: var(--ayah-highlight-bg) !important;
+  box-shadow: var(--ayah-highlight-glow);
+  color: var(--accent-gold) !important;
+}
+
+/* =========================================================================
+   شريط أدوات المصحف الذهبي السفلي العائم (Floating Golden Toolbar for Mobile)
+   ========================================================================= */
+.golden-floating-toolbar {
+  position: fixed;
+  bottom: max(10px, env(safe-area-inset-bottom, 10px));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 20px);
+  max-width: 620px;
+  background: var(--toolbar-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid var(--toolbar-border);
+  border-radius: 18px;
+  box-shadow: var(--toolbar-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 6px 8px;
+  z-index: 100;
+  box-sizing: border-box;
+}
+
+.golden-toolbar-btn {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 5px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 10.5px;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.golden-toolbar-btn.active,
+.golden-toolbar-btn:hover {
+  background: var(--accent-gold-light);
+  color: var(--primary);
+}
+
+[data-theme="dark"] .golden-toolbar-btn.active,
+[data-theme="dark"] .golden-toolbar-btn:hover {
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--accent-gold);
 }
 
 button {
