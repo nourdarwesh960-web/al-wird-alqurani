@@ -44,5 +44,6 @@ android/local.properties
 *.apk
 
 
-data/
+/data/
+!src/data/
 
